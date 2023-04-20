@@ -1,30 +1,49 @@
+import openai
+import json
 import argparse
 import os
-from langchain import OpenAI
-from langchain.agents import initialize_agent
-from langchain.agents import AgentType
+from dotenv import load_dotenv
 
-def get_llm_response(prompt):
-    llm = OpenAI(temperature=0)
-    tools = []
-    agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
-    response = agent.run(prompt)
-    return response
+load_dotenv()
+
+openai.api_key = os.environ["OPENAI_API_KEY"]
+
+def gpt3_query(prompt):
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        max_tokens=200,
+        n=1,
+        stop=None,
+        temperature=0.5,
+    )
+    return response.choices[0].text.strip()
+
+def solve_task(task_description):
+    # Divide and Conquer
+    divided_task = f"Divide the following problem into smaller subproblems: {task_description}"
+    subproblems = gpt3_query(divided_task)
+    
+    solutions = []
+    for subproblem in subproblems.split("\n"):
+        if subproblem.strip() != "":
+            # Solve subproblem iteratively
+            iterative_prompt = f"Solve the following problem iteratively: {subproblem}"
+            solution = gpt3_query(iterative_prompt)
+            solutions.append(solution)
+    
+    # Combine the solutions
+    combine_solutions = f"Combine the following solutions into a single solution: {json.dumps(solutions)}"
+    final_solution = gpt3_query(combine_solutions)
+    return final_solution
 
 def main():
-    parser = argparse.ArgumentParser(description="Get a response from an LLM for a given prompt.")
-    parser.add_argument("prompt", help="text prompt for the LLM")
-
+    parser = argparse.ArgumentParser(description='Solve tasks using OpenAI GPT-3 with divide and conquer and iterative techniques.')
+    parser.add_argument('task_description', type=str, help='Task description')
     args = parser.parse_args()
 
-    # Get API key from environment variable
-    api_key = os.getenv("OPENAI_API_KEY")
-    if not api_key:
-        print("Error: OPENAI_API_KEY is not set in the environment.")
-        return
-
-    response = get_llm_response(args.prompt)
-    print(response)
+    solution = solve_task(args.task_description)
+    print("Solution:", solution)
 
 if __name__ == "__main__":
     main()
