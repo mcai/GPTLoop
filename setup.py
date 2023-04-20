@@ -5,7 +5,7 @@ with open('requirements.txt') as f:
 
 setup(
     name="gptloop",
-    version="0.0.2",
+    version="0.0.3",
     author="Min Cai",
     author_email="min.cai.china@gmail.com",
     description="GPTLoop is a versatile AI-powered assistant to enhance work quality and efficiency",

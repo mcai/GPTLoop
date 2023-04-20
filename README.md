@@ -14,7 +14,7 @@ GPTLoop is a versatile AI-powered assistant designed to enhance work quality and
 To install GPTLoop using pip, open your terminal or command prompt and run:
 
 ```bash
-pip install gptloop
+pip install --upgrade gptloop
 ```
 
 ## Usage
@@ -22,6 +22,7 @@ pip install gptloop
 Once GPTLoop is installed, you can run it from the command line:
 
 ```bash
+export OPENAI_API_KEY=sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 gptloop
 ```
 

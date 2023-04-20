@@ -1,20 +1,15 @@
 import argparse
 import os
-import openai
+from langchain import OpenAI
+from langchain.agents import initialize_agent
+from langchain.agents import AgentType
 
-def get_llm_response(prompt, api_key):
-    openai.api_key = api_key
-
-    response = openai.Completion.create(
-        engine="text-davinci-002",
-        prompt=prompt,
-        max_tokens=100,
-        n=1,
-        stop=None,
-        temperature=0.5,
-    )
-
-    return response.choices[0].text.strip()
+def get_llm_response(prompt):
+    llm = OpenAI(temperature=0)
+    tools = []
+    agent = initialize_agent(tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True)
+    response = agent.run(prompt)
+    return response
 
 def main():
     parser = argparse.ArgumentParser(description="Get a response from an LLM for a given prompt.")
@@ -28,7 +23,7 @@ def main():
         print("Error: OPENAI_API_KEY is not set in the environment.")
         return
 
-    response = get_llm_response(args.prompt, api_key)
+    response = get_llm_response(args.prompt)
     print(response)
 
 if __name__ == "__main__":
