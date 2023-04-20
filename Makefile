@@ -9,4 +9,4 @@ upload:
 .PHONY: run
 run:
 	@read -p "Enter task description: " task_description; \
-	python gptloop/cli.py "$$task_description"
+	python gptloop/cli.py "$$task_description" --verbose
